@@ -20,12 +20,12 @@ from Colors import *
 
 mouse = Controller()
 
-drawingArea = (10, 10)
-corner1 = (2998, 304)
-corner2 = (3707, 683)
+drawingArea = (0, 0)
+corner1 = (0, 0)
+corner2 = (0, 0)
 fileName = str()
 stopDrawing = False
-textbox = 0
+textbox = (0, 0)
 stage = ""
 
 def on_click(x, y, button, pressed):
@@ -39,12 +39,9 @@ def on_click(x, y, button, pressed):
             x = abs(corner1[0]-corner2[0])
             y = abs(corner1[0]-corner2[1])
             drawingArea = (x, y)
-            print(drawingArea)
         if stage == "Get Textbox":
             textbox = mouse.position
     stage = ""
-    
-
 
 # ...or, in a non-blocking fashion:
 listener = Listener(
@@ -59,17 +56,14 @@ def DotPlace():
     drawingArea = (abs(corner1[0]-corner2[0]), abs(corner1[1]-corner2[1]))
     xAddAmount = drawingArea[0]/pixelCount
     yAddAmount = drawingArea[1]/pixelCount
-    response = requests.get("https://upload.wikimedia.org/wikipedia/commons/6/61/Black_Circle.jpg")
-    img = ImageEnhance.Sharpness(Image.open(
-        BytesIO(response.content)).convert('RGBA')).image
+    # response = requests.get("https://upload.wikimedia.org/wikipedia/commons/6/61/Black_Circle.jpg")
+    # img = ImageEnhance.Sharpness(Image.open(
+    #     BytesIO(response.content)).convert('RGBA')).image
+    img = ImageEnhance.Sharpness(Image.open(fileName).convert('RGBA')).image
     img = img.resize((int(pixelCount),
                      int(pixelCount)))
     pix = img.load()
     xSize, ySize = img.size
-    print(xSize, ySize)
-    print(pix[0, 0])
-    # mouse.position = (200, 200)
-    # mouse.click(Button.left, 1)
     lastColor = ""
     time.sleep(1)
     for x in range(int(xSize)):
@@ -158,6 +152,7 @@ def OpenFile():
     fileName = filedialog.askopenfilename(initialdir="", filetypes=[(
         "PNG", "*.png"), ("JPG", "*.jpg"), ("JPEG", "*.jpeg")])
     print(fileName)
+    statusLabel.config(text=f"Loaded image")
 
 root = tk.Tk()
 root.configure(background="#FFF")
@@ -166,13 +161,13 @@ imageMode = tk.IntVar()
 drawMode = tk.IntVar()
 root.geometry("800x600")
 root.title("Gartic Drawbot")
+tk.Button(root, text="Open file", command=OpenFile).pack()
+statusLabel = tk.Label(text="Hello!")
 tk.Button(root, text="Set textbox position", command=GetTextbox).pack()
 tk.Button(root, text="Set top left position", command=GetTopLeft).pack()
 tk.Button(root, text="Set bottom right position", command=GetBottomRight).pack()
 tk.Button(root, text="Draw Image", command=DrawImage).pack()
-tk.Button(root, text="Open file", command=OpenFile).pack()
 
-statusLabel = tk.Label(text="Hello!")
 statusLabel.pack()
 keyboard.add_hotkey("escape", Exit)
 root.mainloop()
