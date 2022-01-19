@@ -86,6 +86,8 @@ def DotPlace():
               lastColor = newColor
               mouse.position = (corner1[0] + xAddAmount * x, corner1[1] + yAddAmount * y)
               mouse.press(Button.left)
+    mouse.release(Button.left)
+    
               
 
 def GetHexColorFromRGB(r, g, b):
